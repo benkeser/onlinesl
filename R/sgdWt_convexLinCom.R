@@ -24,6 +24,7 @@ sgdWt_convexLinCom <- function(Y,slFit.t,p.t,tplus1,stepSize=NULL){
         stepSize <- 1/tplus1
     }
     grad <- - t(p.t) %*% (Y - p.t%*%slFit.t$alpha)
-    wt.tplus1 <- .projToL1Simp(slFit.t$alpha - stepSize * grad)
+    cwt <- slFit.t$alpha - stepSize * grad
+    wt.tplus1 <- onlinesl:::.projToL1Simp(cwt)
     list(alpha=wt.tplus1)
 }

@@ -41,19 +41,19 @@ initialWt_Vfold <- function(Y,
     validRows <- split(sample(1:nl), rep(1:V, length = nl))
     # in each split
     predList <- lapply(validRows, function(folds){
-        pred <- matrix(aaply(SL.library, 1, function(learner){
+        pred <- t(aaply(SL.library, 1, function(learner){
             tmp <- do.call(paste0(learner),
                            args=list(Y=Y[-folds],X=X[-folds,,drop=FALSE],
                                      newX=X[folds,,drop=FALSE],initial = TRUE))
             tmp$pred
-        }),ncol=K, nrow=length(folds), byrow=FALSE)
+        }))
         pred
     })
     pred <- Reduce("rbind", predList)
 
     # figure out which is discrete SL
     risk <- apply(pred, 2, function(p){
-        do.call(lossFn, args=list(Y=Y, p=p, alpha=NULL,
+        do.call(lossFn, args=list(Y=Y[unlist(validRows)], p=p, alpha=NULL,
                                   ensemblePredictFn=NULL, risk=TRUE))
     })
     # index of discrete Super Learner
