@@ -48,7 +48,15 @@ SL.sgd.poisson <- function(Y, X, newX, t, fit, initial = FALSE,
             fm <- glm(as.formula(formula), data=data.frame(Y,X), family=poisson())
         )
         theta <- fm$coefficients
-        pred <- predict(fm, newdata=newX, type="response")
+        # sometimes fit is non-unique, so replace NAs with 0 
+        naCoef <- is.na(theta)
+        if(sum(naCoef)>0){
+            warning("Some NA coefficients in initial fit. Setting = 0")
+        }
+        theta[naCoef] <- 0
+        suppressWarnings(
+            pred <- predict(fm, newdata=newX, type="response")
+        )
     }else{
         # model matrix
         Xmat <- model.matrix(as.formula(formula), data=data.frame(Y,newX))
