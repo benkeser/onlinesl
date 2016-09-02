@@ -117,8 +117,8 @@ onlinesl <- function(Y,
         ct <- 1
         while(!goodStep & ct < ensembleControl$maxCorrectWtStep){
             ct <- ct + 1
-            alphaMod <- matrix(1/ct * slFit.tplus1$alpha + 
-                                   (1-1/ct)*slFit.t$alpha,ncol=1)
+            alphaMod <- matrix(1/(ct^2-1) * slFit.tplus1$alpha + 
+                                   (1-1/(ct^2-1))*slFit.t$alpha,ncol=1)
             slp.alphaMod <- do.call(ensembleControl$ensemblePredictFn, 
                                         args=list(p = p.P_t, 
                                                   alpha=alphaMod))
