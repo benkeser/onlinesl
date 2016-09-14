@@ -19,11 +19,13 @@
 #' 
 #' @export
 
-sgdWt_convexLinCom <- function(Y,slFit.t,p.t,tplus1,stepSize=NULL){
+sgdWt_convexLinComBounded <- function(Y,slFit.t,p.t,tplus1,stepSize=NULL,
+                                      lower, upper){
     if(is.null(stepSize)){
         stepSize <- 1/tplus1
     }
-    grad <- - t(p.t) %*% (Y - p.t%*%slFit.t$alpha)
+    ptild <- (p.t - lower)/(upper-lower)
+    grad <- - t(ptild) %*% (Y - plogis(qlogis(ptild)%*%slFit.t$alpha))
     cwt <- slFit.t$alpha - stepSize * grad
     wt.tplus1 <- onlinesl:::.projToL1Simp(cwt)
     list(alpha=wt.tplus1)

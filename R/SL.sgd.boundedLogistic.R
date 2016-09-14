@@ -1,9 +1,11 @@
-#' Computes a stochastic gradient step for poisson regression
+#' Computes a stochastic gradient step for bounded logistic regression
 #' 
-#' Wrapper function for using Poisson GLM with online SL. If the function is 
-#' called with \code{initial=TRUE} then fits a Poisson regression using the 
-#' specified formula and returns predicted values on data frame \code{newX}. Any 
-#' input for \code{fit} is ignored. This is called by \code{onlinesl} to obtain
+#' Wrapper function for using Logistic GLM with online SL when outcome is 
+#' bounded between \code{lower} and \code{upper}. If the function is 
+#' called with \code{initial=TRUE} then fits a bounded logistic regression using 
+#' the  specified formula and returns predicted values on data frame 
+#' \code{newX}. Any input for \code{fit} is ignored. 
+#' This is called by \code{onlinesl} to obtain
 #' starting values for the SGD algorithm. If the function is called with 
 #' \code{inital=FALSE}, the function computes a prediction on \code{newX} based 
 #' on the current \code{fit} and updates the value of \code{fit} by taking a  
@@ -25,12 +27,15 @@
 #' @param initial A boolean indicating whether to execute the function for
 #' initial parameter estimates or for an sgd update step. 
 #' @param formula The regression formula to be used, specified as a character
+#' @param lower The lower bound on the outcome \code{Y}
+#' @param upper The upper bound on the outcome \code{Y}
 #' @param stepSize A function evaluating what step size to use in the SGD 
 #' algorithm (ignored if \code{initial = TRUE})
 #'
-#' @return fit An object of class \code{SL.sgd.poisson}. A named list with 
-#' entries \code{theta} and \code{formula} consisting of the current regression 
-#' parameter estimates and the regression formula.
+#' @return fit An object of class \code{SL.sgd.boundedLogistic}. A named list 
+#' with entries \code{theta} and \code{formula} consisting of the current 
+#' regression parameter estimates and the regression formula. Also includes the
+#' specified \code{upper} and \code{lower} bounds. 
 #' @return pred Predictions on newX either based on an initial call to \code{glm}
 #' (if \code{initial = TRUE}) or based on an SGD update (if \code{initial=FALSE})
 #'
@@ -40,12 +45,15 @@
 #' Examples to come
 #' 
 
-SL.sgd.poisson <- function(Y, X, newX, t, fit, initial = FALSE,
-                           formula="Y ~ .", 
+SL.sgd.boundedLogistic <- function(Y, X, newX, t, fit, initial = FALSE,
+                           formula="Y ~ .", lower, upper,
                            stepSize=function(t){1/t}, ...){
     if(initial){
+        Ytild <- (Y - lower)/(upper - lower)
         suppressWarnings(
-            fm <- glm(as.formula(formula), data=data.frame(Y,X), family=poisson())
+            fm <- glm(as.formula(gsub(formula, "Y ~", "Ytild ~")), 
+                      data=data.frame(Ytild,X), 
+                      family=binomial())
         )
         theta <- fm$coefficients
         # sometimes fit is non-unique, so replace NAs with 0 
@@ -55,21 +63,24 @@ SL.sgd.poisson <- function(Y, X, newX, t, fit, initial = FALSE,
         }
         theta[naCoef] <- 0
         suppressWarnings(
-            pred <- predict(fm, newdata=newX, type="response")
+            ptild <- predict(fm, newdata=newX, type="response")
         )
+        p <- ptild*(upper - lower) + lower
     }else{
         # model matrix
         Xmat <- model.matrix(as.formula(formula), data=data.frame(Y,newX))
         # prediction
-        pred <- exp(Xmat%*%fit$theta)
+        ptild <- plogis(Xmat%*%fit$theta)
+        pred <- ptild*(upper - lower) + lower
         # gradient
-        grad <- - t(Xmat) %*% (Y - pred)
+        grad <- - t(Xmat) %*% ((Y-lower)/(upper - lower) - ptild)
         # learning rate
         g <- do.call(stepSize, args=list(t=t))
         # update step
         theta <- fit$theta - g * grad
     }
-    out <- list(fit=list(theta=theta, formula=formula), pred=pred)
-    class(out) <- "SL.sgd.poisson"
+    out <- list(fit=list(theta=theta, formula=formula, upper=upper, lower=lower), 
+                pred=pred)
+    class(out) <- "SL.sgd.boundedLogistic"
     return(out)
 }
