@@ -19,19 +19,19 @@
                            upper, lower){
     if(is.null(ensemblePredictFn)){
         if(!risk){
-            (Y-lower)/(upper-lower)*log((p - lower)/(upper - lower)) + 
+           - (Y-lower)/(upper-lower)*log((p - lower)/(upper - lower)) -
                 (1-(Y-lower)/(upper-lower))*log(1-(p - lower)/(upper - lower))
         }else{
-            mean((Y-lower)/(upper-lower)*log((p - lower)/(upper - lower)) + 
+            mean(-(Y-lower)/(upper-lower)*log((p - lower)/(upper - lower)) - 
                      (1-(Y-lower)/(upper-lower))*log(1-(p - lower)/(upper - lower)))
         }
     }else{
         pEnsemble <- do.call(ensemblePredictFn, args=list(p=p,alpha=alpha))
         if(!risk){
-            (Y-lower)/(upper-lower)*log((pEnsemble - lower)/(upper - lower)) + 
+            -(Y-lower)/(upper-lower)*log((pEnsemble - lower)/(upper - lower)) - 
                 (1-(Y-lower)/(upper-lower))*log(1-(pEnsemble - lower)/(upper - lower))
         }else{
-            mean((Y-lower)/(upper-lower)*log((pEnsemble - lower)/(upper - lower)) + 
+            mean(-(Y-lower)/(upper-lower)*log((pEnsemble - lower)/(upper - lower)) - 
                      (1-(Y-lower)/(upper-lower))*log(1-(pEnsemble - lower)/(upper - lower)))
         }
     }

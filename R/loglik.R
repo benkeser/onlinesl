@@ -17,16 +17,16 @@
 .loglik <- function(Y, p, alpha, ensemblePredictFn=NULL, risk=TRUE){
     if(is.null(ensemblePredictFn)){
         if(!risk){
-            Y*log(p) + (1-Y)*log(1-p)
+            -Y*log(p) - (1-Y)*log(1-p)
         }else{
-            mean(Y*log(p) + (1-Y)*log(1-p))
+            mean(-Y*log(p) - (1-Y)*log(1-p))
         }
     }else{
         pEnsemble <- do.call(ensemblePredictFn, args=list(p=p,alpha=alpha))
         if(!risk){
-            Y*log(pEnsemble) + (1-Y)*log(1-pEnsemble)
+            -Y*log(pEnsemble) - (1-Y)*log(1-pEnsemble)
         }else{
-            mean(Y*log(pEnsemble) + (1-Y)*log(1-pEnsemble))
+            mean(-Y*log(pEnsemble) - (1-Y)*log(1-pEnsemble))
         }
     }
 }
