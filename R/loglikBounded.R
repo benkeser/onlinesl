@@ -16,23 +16,27 @@
 
 
 .loglikBounded <- function(Y, p, alpha, ensemblePredictFn=NULL, risk=TRUE,
-                           upper, lower){
+                           upper, lower, trimLogit = 1e-5){
+    Ytild <- (Y-lower)/(upper-lower)
     if(is.null(ensemblePredictFn)){
+        ptild <- (p - lower)/(upper - lower)
+        ptild[ptild < trimLogit] <- trimLogit
+        ptild[ptild > 1-trimLogit] <- 1-trimLogit
         if(!risk){
-           - (Y-lower)/(upper-lower)*log((p - lower)/(upper - lower)) -
-                (1-(Y-lower)/(upper-lower))*log(1-(p - lower)/(upper - lower))
+           - Ytild*log(ptild) - (1-Ytild)*log(1-ptild)
         }else{
-            mean(-(Y-lower)/(upper-lower)*log((p - lower)/(upper - lower)) - 
-                     (1-(Y-lower)/(upper-lower))*log(1-(p - lower)/(upper - lower)))
+            mean(- Ytild*log(ptild) - (1-Ytild)*log(1-ptild))
         }
     }else{
         pEnsemble <- do.call(ensemblePredictFn, args=list(p=p,alpha=alpha))
+        pEtild <- (pEnsemble - lower)/(upper - lower)
+        pEtild[pEtild < trimLogit] <- trimLogit
+        pEtild[pEtild > 1-trimLogit] <- 1-trimLogit
+        
         if(!risk){
-            -(Y-lower)/(upper-lower)*log((pEnsemble - lower)/(upper - lower)) - 
-                (1-(Y-lower)/(upper-lower))*log(1-(pEnsemble - lower)/(upper - lower))
+            -Ytild*log(pEtild) - (1-Ytild)*log(1-pEtild)
         }else{
-            mean(-(Y-lower)/(upper-lower)*log((pEnsemble - lower)/(upper - lower)) - 
-                     (1-(Y-lower)/(upper-lower))*log(1-(pEnsemble - lower)/(upper - lower)))
+            mean(-Ytild*log(pEtild) - (1-Ytild)*log(1-pEtild))
         }
     }
 }
