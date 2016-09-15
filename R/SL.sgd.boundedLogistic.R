@@ -51,7 +51,8 @@ SL.sgd.boundedLogistic <- function(Y, X, newX, t, fit, initial = FALSE,
     if(initial){
         Ytild <- (Y - lower)/(upper - lower)
         suppressWarnings(
-            fm <- glm(as.formula(gsub(formula, "Y ~", "Ytild ~")), 
+            fm <- glm(as.formula(gsub(x=formula, pattern="Y", 
+                                      replacement="Ytild")), 
                       data=data.frame(Ytild,X), 
                       family=binomial())
         )
