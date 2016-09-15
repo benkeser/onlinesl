@@ -16,5 +16,5 @@ convexBoundedLogitCom <- function(p, alpha, trimLogit = 1e-5,
     pB <- (p - lower)/(upper - lower)
     pB[pB < trimLogit] <- trimLogit; 
     pB[pB > 1-trimLogit] <- 1-trimLogit
-    plogis(qlogis(p) %*% alpha)*(upper - lower) + lower
+    plogis(qlogis(pB) %*% alpha)*(upper - lower) + lower
 }
