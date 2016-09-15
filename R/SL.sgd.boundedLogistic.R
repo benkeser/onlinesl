@@ -66,7 +66,7 @@ SL.sgd.boundedLogistic <- function(Y, X, newX, t, fit, initial = FALSE,
         suppressWarnings(
             ptild <- predict(fm, newdata=newX, type="response")
         )
-        p <- ptild*(upper - lower) + lower
+        pred <- ptild*(upper - lower) + lower
     }else{
         # model matrix
         Xmat <- model.matrix(as.formula(formula), data=data.frame(Y,newX))
