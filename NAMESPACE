@@ -2,6 +2,7 @@
 
 S3method(predict,SL.sgd.boundedLogistic)
 S3method(predict,SL.sgd.poisson)
+S3method(predict,onlinesl)
 S3method(print,onlinesl)
 export(SL.sgd.boundedLogistic)
 export(SL.sgd.poisson)

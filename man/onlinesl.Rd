@@ -6,8 +6,8 @@
 \usage{
 onlinesl(Y, X, family, SL.library, nl = 200, parallel = "seq",
   ensembleControl = list(initialWtFn = "initialWt_Vfold", ensemblePredictFn =
-  "predict_convexLinCom", updateWtFn = "sgdWt_convexLinCom", maxCorrectWtStep =
-  100), trace = list(verbose = FALSE, saveRisk = NULL), lossFn = ".mse")
+  "convexLinCom", updateWtFn = "sgdWt_convexLinCom", maxCorrectWtStep = 100),
+  trace = list(verbose = FALSE, saveRisk = NULL), lossFn = ".mse")
 }
 \arguments{
 \item{inputParameter1}{A description of the input parameter}

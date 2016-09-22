@@ -15,10 +15,10 @@
 #' Examples to come
 #' 
 
-predict.SL.sgd.boundedLogistic <- function(x, newdata, ...){
+predict.SL.sgd.boundedLogistic <- function(object, newdata, ...){
     Y <- rep(0,nrow(newdata))
-    Xmat <- model.matrix(as.formula(x$fit$formula),newdata)
-    ptild <- plogis(Xmat %*% unlist(x$fit$theta))
-    pred <- ptild*(x$fit$upper - x$fit$lower) + x$fit$lower
+    Xmat <- model.matrix(as.formula(object$fit$formula),newdata)
+    ptild <- plogis(Xmat %*% unlist(object$fit$theta))
+    pred <- ptild*(object$fit$upper - object$fit$lower) + object$fit$lower
     pred
 }

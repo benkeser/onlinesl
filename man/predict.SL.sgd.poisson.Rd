@@ -4,7 +4,7 @@
 \alias{predict.SL.sgd.poisson}
 \title{Computes a prediction for sgd poisson regression}
 \usage{
-\method{predict}{SL.sgd.poisson}(x, newdata, ...)
+\method{predict}{SL.sgd.poisson}(object, newdata, ...)
 }
 \arguments{
 \item{newdata}{A \code{data.frame} object with data on which predictions are 

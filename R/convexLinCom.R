@@ -8,6 +8,6 @@
 #'
 #' @return prediction An n-length vector of super learner predictions
 
-predict_convexLinCom <- function(p, alpha){
+convexLinCom <- function(p, alpha){
     p %*% alpha
 }

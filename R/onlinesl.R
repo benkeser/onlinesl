@@ -23,7 +23,7 @@ onlinesl <- function(Y,
                      nl=200,
                      parallel="seq",
                      ensembleControl = list(initialWtFn="initialWt_Vfold",
-                                            ensemblePredictFn="predict_convexLinCom",
+                                            ensemblePredictFn="convexLinCom",
                                             updateWtFn="sgdWt_convexLinCom",
                                             maxCorrectWtStep = 100),
                      trace = list(verbose = FALSE,
@@ -141,7 +141,8 @@ onlinesl <- function(Y,
     }
     out <- list(call=call, libraryNames=SL.library, 
                 coef=slFit.t$alpha, CVRisk = RCV.t, 
-                fitLibrary=fit.t, traceRisk = traceRisk
+                fitLibrary=fit.t, traceRisk = traceRisk,
+                ensembleControl = ensembleControl
     )
     class(out) <- "onlinesl"
     out

@@ -4,7 +4,7 @@
 \alias{predict.SL.sgd.boundedLogistic}
 \title{Computes a prediction for sgd poisson regression}
 \usage{
-\method{predict}{SL.sgd.boundedLogistic}(x, newdata, ...)
+\method{predict}{SL.sgd.boundedLogistic}(object, newdata, ...)
 }
 \arguments{
 \item{newdata}{A \code{data.frame} object with data on which predictions are 

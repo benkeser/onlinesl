@@ -15,9 +15,9 @@
 #' Examples to come
 #' 
 
-predict.SL.sgd.poisson <- function(x, newdata, ...){
+predict.SL.sgd.poisson <- function(object, newdata, ...){
     Y <- rep(0,nrow(newdata))
-    Xmat <- model.matrix(as.formula(x$fit$formula),newdata)
-    pred <- exp(Xmat %*% unlist(x$fit$theta))
+    Xmat <- model.matrix(as.formula(object$fit$formula),newdata)
+    pred <- exp(Xmat %*% unlist(object$fit$theta))
     pred
 }
